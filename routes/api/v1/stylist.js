@@ -207,7 +207,7 @@ router.get('/getstylist/:id', function (req, res, next) {
             first_name: 'Margit',
             last_name: 'Redford',
             job_role: 'Educator',
-            profile_pic: '/dd/',
+            profile_pic: base64_encode(path.resolve('./public/images/margit.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
             city: 'WEST BEACH',
@@ -231,7 +231,7 @@ router.get('/getstylist/:id', function (req, res, next) {
             first_name: 'Taunya',
             last_name: 'Spada',
             job_role: 'Educator',
-            profile_pic: '/dd/',
+            profile_pic: base64_encode(path.resolve('./public/images/taunya.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
             city: 'WEST BEACH',
@@ -255,7 +255,7 @@ router.get('/getstylist/:id', function (req, res, next) {
             first_name: 'Krystina',
             last_name: 'Lish',
             job_role: 'Educator',
-            profile_pic: '/dd/',
+            profile_pic: base64_encode(path.resolve('./public/images/krystina.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
             city: 'WEST BEACH',
@@ -270,8 +270,31 @@ router.get('/getstylist/:id', function (req, res, next) {
             pref_locations: ['Perth', 'Darwin', 'Canberra', 'Hobart', 'Brisbane'],
             charges: [{name: '8AM-12PM', charge: 10, currency: 'AUD'}, {name: '12PM-5PM', charge: 10, currency: 'AUD'}],
             rating: 5
+        },
+        {
+            id: 6,
+            user_id: 5,
+            is_active: true,
+            created_date: new Date(),
+            first_name: 'Florine',
+            last_name: 'Meister',
+            job_role: 'Educator',
+            profile_pic: base64_encode(path.resolve('./public/images/florine.jpg')),
+            address_line_1: 'U 235',
+            address_line_2: '201-203 BROADWAY AVE',
+            city: 'WEST BEACH',
+            state: 'SA',
+            zip: 5024,
+            country: 'Australia',
+            telephone: 711225455,
+            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
+            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            terms_and_condition: '',
+            skills: ['Bridal', 'Curling', 'Hair Coloring', 'Rebonding'],
+            pref_locations: ['Perth', 'Darwin',  'Hobart', 'Brisbane'],
+            charges: [{name: '8AM-12PM', charge: 30, currency: 'AUD'}, {name: '12PM-5PM', charge: 30, currency: 'AUD'}],
+            rating: 5
         }
-
     ];
 
     const result = stylistList.filter(value => {
