@@ -42,11 +42,12 @@ router.get('/getskills', function (req, res, next) {
 });
 
 router.get('/image', function (req, res, next) {
-    var base64str = base64_encode(path.resolve('./public/images/pay.jpg'));
+    var p = path.resolve('./public/images/taunya.jpg');
+    var base64str = base64_encode(p);
     console.log(base64str);
 
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(JSON.stringify({img: base64str, path: path.resolve('./public/images/pay.jpg')}));
+    res.status(200).send(JSON.stringify({img: base64str, path: p}));
 });
 
 
