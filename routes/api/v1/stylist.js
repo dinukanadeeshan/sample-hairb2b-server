@@ -305,7 +305,7 @@ router.get('/getstylist/:id', function (req, res, next) {
         return false;
     });
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(result);
+    res.status(200).send(result[0]);
 });
 
 router.get('/getnames', function (req, res, next) {
