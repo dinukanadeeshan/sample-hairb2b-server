@@ -40,6 +40,19 @@ router.get('/getskills', function (req, res, next) {
         }
     ]));
 });
+router.get('/jobroles', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(JSON.stringify([
+        {
+            id: 1,
+            role: 'Educator'
+        },
+        {
+            id: 2,
+            role: 'Stylist'
+        }
+    ]));
+});
 
 router.get('/image', function (req, res, next) {
     var p = path.resolve('./public/images/taunya.jpg');

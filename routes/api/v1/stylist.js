@@ -218,8 +218,7 @@ router.get('/getstylistsbyskill/:skill', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'the colour Queen of Perth, owner of East Fremantle\'s leading Hair Lounge - Eighty One on George. Claire and her hand selected and exceptionally trained team have built a solid reputation and social media presence by the amazing colour trends, crazy colours they create daily and the ongoing motivation they share! Claire is an advocate for young aspiring business owners and shares her wealth of knowledge and struggles she has over come being in business from age of 21.',
             terms_and_condition: '',
             skills: ['Bridal', 'Curling', 'Rebonding', 'Hair Coloring', 'Hair Cutting'],
             pref_locations: ['Perth', 'Darwin', 'Adelaide', 'Melbourne', 'Canberra', 'Hobart', 'Brisbane'],
@@ -233,7 +232,7 @@ router.get('/getstylistsbyskill/:skill', function (req, res, next) {
             created_date: new Date(),
             first_name: 'Taunya',
             last_name: 'Spada',
-            job_role: 'Educator',
+            job_role: 'Stylist',
             profile_pic: base64_encode(path.resolve('./public/images/taunya.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
@@ -242,8 +241,7 @@ router.get('/getstylistsbyskill/:skill', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'I have been passionately involved in my industry for 25 years. Doing pretty much everything from winning competitions, educating, doing shows, photo shoots, writing articles and building businesses. I love sharing my knowledge and working with other passionate hairdressers. ',
             terms_and_condition: '',
             skills: ['Hair Coloring', 'Hair Cutting'],
             pref_locations: ['Perth', 'Darwin', 'Adelaide', 'Melbourne'],
@@ -281,7 +279,7 @@ router.get('/getstylistsbyskill/:skill', function (req, res, next) {
             created_date: new Date(),
             first_name: 'Florine',
             last_name: 'Meister',
-            job_role: 'Educator',
+            job_role: 'Stylist',
             profile_pic: base64_encode(path.resolve('./public/images/florine.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
@@ -290,14 +288,14 @@ router.get('/getstylistsbyskill/:skill', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'Complimented by Sassoon on my Haircutting , have cut the Rolling Stones ,Santana etc etc featured in Vogue ,Harpers ,Cleo , Instyle ,Follow me ,Stiletto etc etc. Did a Haircutting video for Sassoon Japanese television ,was a finelist on Hairbrained on my cutting video Hair Dance and Voi eight haircuts , have done haircutting video for Jaguar scissors Mizutani scissors and Sharpline scissors. Hair Expo with InStyle.',
             terms_and_condition: '',
             skills: ['Bridal', 'Curling', 'Hair Coloring', 'Rebonding'],
             pref_locations: ['Perth', 'Darwin', 'Hobart', 'Brisbane'],
             charges: [{name: '8AM-12PM', charge: 30, currency: 'AUD'}, {name: '12PM-5PM', charge: 30, currency: 'AUD'}],
             rating: 5
         }
+
     ];
 
     const result = stylistList.filter(value => {
@@ -312,16 +310,167 @@ router.get('/getstylistsbyskill/:skill', function (req, res, next) {
         }
         return false;
     });
-    result.sort((a, b)=>{
-       if(a.rating > b.rating){
-           return -1;
-       } else if (a.rating === b.rating){
-           return 0;
-       }
-       return 1;
+    result.sort((a, b) => {
+        if (a.rating > b.rating) {
+            return -1;
+        } else if (a.rating === b.rating) {
+            return 0;
+        }
+        return 1;
     });
     res.setHeader('Content-Type', 'application/json');
     res.status(200).send(result);
+});
+router.get('/gettopstylists', function (req, res, next) {
+
+    var stylistList = [
+        {
+            id: 4,
+            user_id: 4,
+            is_active: true,
+            created_date: new Date(),
+            first_name: 'Krystina',
+            last_name: 'Lish',
+            job_role: 'Educator',
+            profile_pic: base64_encode(path.resolve('./public/images/krystina.jpg')),
+            address_line_1: 'U 235',
+            address_line_2: '201-203 BROADWAY AVE',
+            city: 'WEST BEACH',
+            state: 'SA',
+            zip: 5024,
+            country: 'Australia',
+            telephone: 711225455,
+            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
+            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            terms_and_condition: '',
+            skills: ['Bridal', 'Curling', 'Hair Cutting'],
+            pref_locations: ['Perth', 'Darwin', 'Canberra', 'Hobart', 'Brisbane'],
+            charges: [{name: '8AM-12PM', charge: 10, currency: 'AUD'}, {name: '12PM-5PM', charge: 10, currency: 'AUD'}],
+            rating: 5
+        },
+        {
+            id: 6,
+            user_id: 5,
+            is_active: true,
+            created_date: new Date(),
+            first_name: 'Florine',
+            last_name: 'Meister',
+            job_role: 'Stylist',
+            profile_pic: base64_encode(path.resolve('./public/images/florine.jpg')),
+            address_line_1: 'U 235',
+            address_line_2: '201-203 BROADWAY AVE',
+            city: 'WEST BEACH',
+            state: 'SA',
+            zip: 5024,
+            country: 'Australia',
+            telephone: 711225455,
+            description: 'Complimented by Sassoon on my Haircutting , have cut the Rolling Stones ,Santana etc etc featured in Vogue ,Harpers ,Cleo , Instyle ,Follow me ,Stiletto etc etc. Did a Haircutting video for Sassoon Japanese television ,was a finelist on Hairbrained on my cutting video Hair Dance and Voi eight haircuts , have done haircutting video for Jaguar scissors Mizutani scissors and Sharpline scissors. Hair Expo with InStyle.',
+            terms_and_condition: '',
+            skills: ['Bridal', 'Curling', 'Hair Coloring', 'Rebonding'],
+            pref_locations: ['Perth', 'Darwin', 'Hobart', 'Brisbane'],
+            charges: [{name: '8AM-12PM', charge: 30, currency: 'AUD'}, {name: '12PM-5PM', charge: 30, currency: 'AUD'}],
+            rating: 5
+        },
+        {
+            id: 4,
+            user_id: 4,
+            is_active: true,
+            created_date: new Date(),
+            first_name: 'Krystina',
+            last_name: 'Lish',
+            job_role: 'Educator',
+            profile_pic: base64_encode(path.resolve('./public/images/krystina.jpg')),
+            address_line_1: 'U 235',
+            address_line_2: '201-203 BROADWAY AVE',
+            city: 'WEST BEACH',
+            state: 'SA',
+            zip: 5024,
+            country: 'Australia',
+            telephone: 711225455,
+            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
+            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            terms_and_condition: '',
+            skills: ['Bridal', 'Curling', 'Hair Cutting'],
+            pref_locations: ['Perth', 'Darwin', 'Canberra', 'Hobart', 'Brisbane'],
+            charges: [{name: '8AM-12PM', charge: 10, currency: 'AUD'}, {name: '12PM-5PM', charge: 10, currency: 'AUD'}],
+            rating: 5
+        },
+        {
+            id: 6,
+            user_id: 5,
+            is_active: true,
+            created_date: new Date(),
+            first_name: 'Florine',
+            last_name: 'Meister',
+            job_role: 'Stylist',
+            profile_pic: base64_encode(path.resolve('./public/images/florine.jpg')),
+            address_line_1: 'U 235',
+            address_line_2: '201-203 BROADWAY AVE',
+            city: 'WEST BEACH',
+            state: 'SA',
+            zip: 5024,
+            country: 'Australia',
+            telephone: 711225455,
+            description: 'Complimented by Sassoon on my Haircutting , have cut the Rolling Stones ,Santana etc etc featured in Vogue ,Harpers ,Cleo , Instyle ,Follow me ,Stiletto etc etc. Did a Haircutting video for Sassoon Japanese television ,was a finelist on Hairbrained on my cutting video Hair Dance and Voi eight haircuts , have done haircutting video for Jaguar scissors Mizutani scissors and Sharpline scissors. Hair Expo with InStyle.',
+            terms_and_condition: '',
+            skills: ['Bridal', 'Curling', 'Hair Coloring', 'Rebonding'],
+            pref_locations: ['Perth', 'Darwin', 'Hobart', 'Brisbane'],
+            charges: [{name: '8AM-12PM', charge: 30, currency: 'AUD'}, {name: '12PM-5PM', charge: 30, currency: 'AUD'}],
+            rating: 5
+        },
+        {
+            id: 4,
+            user_id: 4,
+            is_active: true,
+            created_date: new Date(),
+            first_name: 'Krystina',
+            last_name: 'Lish',
+            job_role: 'Educator',
+            profile_pic: base64_encode(path.resolve('./public/images/krystina.jpg')),
+            address_line_1: 'U 235',
+            address_line_2: '201-203 BROADWAY AVE',
+            city: 'WEST BEACH',
+            state: 'SA',
+            zip: 5024,
+            country: 'Australia',
+            telephone: 711225455,
+            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
+            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            terms_and_condition: '',
+            skills: ['Bridal', 'Curling', 'Hair Cutting'],
+            pref_locations: ['Perth', 'Darwin', 'Canberra', 'Hobart', 'Brisbane'],
+            charges: [{name: '8AM-12PM', charge: 10, currency: 'AUD'}, {name: '12PM-5PM', charge: 10, currency: 'AUD'}],
+            rating: 5
+        },
+        {
+            id: 6,
+            user_id: 5,
+            is_active: true,
+            created_date: new Date(),
+            first_name: 'Florine',
+            last_name: 'Meister',
+            job_role: 'Stylist',
+            profile_pic: base64_encode(path.resolve('./public/images/florine.jpg')),
+            address_line_1: 'U 235',
+            address_line_2: '201-203 BROADWAY AVE',
+            city: 'WEST BEACH',
+            state: 'SA',
+            zip: 5024,
+            country: 'Australia',
+            telephone: 711225455,
+            description: 'Complimented by Sassoon on my Haircutting , have cut the Rolling Stones ,Santana etc etc featured in Vogue ,Harpers ,Cleo , Instyle ,Follow me ,Stiletto etc etc. Did a Haircutting video for Sassoon Japanese television ,was a finelist on Hairbrained on my cutting video Hair Dance and Voi eight haircuts , have done haircutting video for Jaguar scissors Mizutani scissors and Sharpline scissors. Hair Expo with InStyle.',
+            terms_and_condition: '',
+            skills: ['Bridal', 'Curling', 'Hair Coloring', 'Rebonding'],
+            pref_locations: ['Perth', 'Darwin', 'Hobart', 'Brisbane'],
+            charges: [{name: '8AM-12PM', charge: 30, currency: 'AUD'}, {name: '12PM-5PM', charge: 30, currency: 'AUD'}],
+            rating: 5
+        }
+
+
+    ];
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(stylistList);
 });
 
 router.get('/getstylist/:id', function (req, res, next) {
@@ -344,8 +493,7 @@ router.get('/getstylist/:id', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'the colour Queen of Perth, owner of East Fremantle\'s leading Hair Lounge - Eighty One on George. Claire and her hand selected and exceptionally trained team have built a solid reputation and social media presence by the amazing colour trends, crazy colours they create daily and the ongoing motivation they share! Claire is an advocate for young aspiring business owners and shares her wealth of knowledge and struggles she has over come being in business from age of 21.',
             terms_and_condition: '',
             skills: ['Bridal', 'Curling', 'Rebonding', 'Hair Coloring', 'Hair Cutting'],
             pref_locations: ['Perth', 'Darwin', 'Adelaide', 'Melbourne', 'Canberra', 'Hobart', 'Brisbane'],
@@ -359,7 +507,7 @@ router.get('/getstylist/:id', function (req, res, next) {
             created_date: new Date(),
             first_name: 'Taunya',
             last_name: 'Spada',
-            job_role: 'Educator',
+            job_role: 'Stylist',
             profile_pic: base64_encode(path.resolve('./public/images/taunya.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
@@ -368,8 +516,7 @@ router.get('/getstylist/:id', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'I have been passionately involved in my industry for 25 years. Doing pretty much everything from winning competitions, educating, doing shows, photo shoots, writing articles and building businesses. I love sharing my knowledge and working with other passionate hairdressers. ',
             terms_and_condition: '',
             skills: ['Hair Coloring', 'Hair Cutting'],
             pref_locations: ['Perth', 'Darwin', 'Adelaide', 'Melbourne'],
@@ -407,7 +554,7 @@ router.get('/getstylist/:id', function (req, res, next) {
             created_date: new Date(),
             first_name: 'Florine',
             last_name: 'Meister',
-            job_role: 'Educator',
+            job_role: 'Stylist',
             profile_pic: base64_encode(path.resolve('./public/images/florine.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
@@ -416,14 +563,14 @@ router.get('/getstylist/:id', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'Complimented by Sassoon on my Haircutting , have cut the Rolling Stones ,Santana etc etc featured in Vogue ,Harpers ,Cleo , Instyle ,Follow me ,Stiletto etc etc. Did a Haircutting video for Sassoon Japanese television ,was a finelist on Hairbrained on my cutting video Hair Dance and Voi eight haircuts , have done haircutting video for Jaguar scissors Mizutani scissors and Sharpline scissors. Hair Expo with InStyle.',
             terms_and_condition: '',
             skills: ['Bridal', 'Curling', 'Hair Coloring', 'Rebonding'],
             pref_locations: ['Perth', 'Darwin', 'Hobart', 'Brisbane'],
             charges: [{name: '8AM-12PM', charge: 30, currency: 'AUD'}, {name: '12PM-5PM', charge: 30, currency: 'AUD'}],
             rating: 5
         }
+
     ];
 
     const result = stylistList.filter(value => {
@@ -434,10 +581,10 @@ router.get('/getstylist/:id', function (req, res, next) {
         return false;
     });
 
-    result.sort((a, b)=>{
-        if(a.rating > b.rating){
+    result.sort((a, b) => {
+        if (a.rating > b.rating) {
             return -1;
-        } else if (a.rating === b.rating){
+        } else if (a.rating === b.rating) {
             return 0;
         }
         return 1;
@@ -492,8 +639,7 @@ router.get('/getstylistbyname/:name', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'the colour Queen of Perth, owner of East Fremantle\'s leading Hair Lounge - Eighty One on George. Claire and her hand selected and exceptionally trained team have built a solid reputation and social media presence by the amazing colour trends, crazy colours they create daily and the ongoing motivation they share! Claire is an advocate for young aspiring business owners and shares her wealth of knowledge and struggles she has over come being in business from age of 21.',
             terms_and_condition: '',
             skills: ['Bridal', 'Curling', 'Rebonding', 'Hair Coloring', 'Hair Cutting'],
             pref_locations: ['Perth', 'Darwin', 'Adelaide', 'Melbourne', 'Canberra', 'Hobart', 'Brisbane'],
@@ -507,7 +653,7 @@ router.get('/getstylistbyname/:name', function (req, res, next) {
             created_date: new Date(),
             first_name: 'Taunya',
             last_name: 'Spada',
-            job_role: 'Educator',
+            job_role: 'Stylist',
             profile_pic: base64_encode(path.resolve('./public/images/taunya.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
@@ -516,8 +662,7 @@ router.get('/getstylistbyname/:name', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'I have been passionately involved in my industry for 25 years. Doing pretty much everything from winning competitions, educating, doing shows, photo shoots, writing articles and building businesses. I love sharing my knowledge and working with other passionate hairdressers. ',
             terms_and_condition: '',
             skills: ['Hair Coloring', 'Hair Cutting'],
             pref_locations: ['Perth', 'Darwin', 'Adelaide', 'Melbourne'],
@@ -555,7 +700,7 @@ router.get('/getstylistbyname/:name', function (req, res, next) {
             created_date: new Date(),
             first_name: 'Florine',
             last_name: 'Meister',
-            job_role: 'Educator',
+            job_role: 'Stylist',
             profile_pic: base64_encode(path.resolve('./public/images/florine.jpg')),
             address_line_1: 'U 235',
             address_line_2: '201-203 BROADWAY AVE',
@@ -564,8 +709,7 @@ router.get('/getstylistbyname/:name', function (req, res, next) {
             zip: 5024,
             country: 'Australia',
             telephone: 711225455,
-            description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-            ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+            description: 'Complimented by Sassoon on my Haircutting , have cut the Rolling Stones ,Santana etc etc featured in Vogue ,Harpers ,Cleo , Instyle ,Follow me ,Stiletto etc etc. Did a Haircutting video for Sassoon Japanese television ,was a finelist on Hairbrained on my cutting video Hair Dance and Voi eight haircuts , have done haircutting video for Jaguar scissors Mizutani scissors and Sharpline scissors. Hair Expo with InStyle.',
             terms_and_condition: '',
             skills: ['Bridal', 'Curling', 'Hair Coloring', 'Rebonding'],
             pref_locations: ['Perth', 'Darwin', 'Hobart', 'Brisbane'],
@@ -583,10 +727,10 @@ router.get('/getstylistbyname/:name', function (req, res, next) {
         return false;
     });
 
-    result.sort((a, b)=>{
-        if(a.rating > b.rating){
+    result.sort((a, b) => {
+        if (a.rating > b.rating) {
             return -1;
-        } else if (a.rating === b.rating){
+        } else if (a.rating === b.rating) {
             return 0;
         }
         return 1;
