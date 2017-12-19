@@ -180,6 +180,46 @@ var stylistList = [
                     currency: 'AUD'
                 },
                 type: 'BOOKED'
+            },
+            {
+                id: 19,
+                date: new Date('2018-01-02'),
+                timeSlot: {
+                    name: '8AM - 12PM',
+                    charge: 10,
+                    currency: 'AUD'
+                },
+                type: 'BOOKED'
+            },
+            {
+                id: 20,
+                date: new Date('2018-01-02'),
+                timeSlot: {
+                    name: '12PM - 5PM',
+                    charge: 20,
+                    currency: 'AUD'
+                },
+                type: 'BOOKED'
+            },
+            {
+                id: 21,
+                date: new Date('2017-12-29'),
+                timeSlot: {
+                    name: '8AM - 12PM',
+                    charge: 10,
+                    currency: 'AUD'
+                },
+                type: 'BOOKED'
+            },
+            {
+                id: 22,
+                date: new Date('2017-12-29'),
+                timeSlot: {
+                    name: '12PM - 5PM',
+                    charge: 20,
+                    currency: 'AUD'
+                },
+                type: 'BOOKED'
             }
         ]
     },
@@ -270,6 +310,26 @@ var stylistList = [
             {
                 id: 16,
                 date: new Date('2018-01-04'),
+                timeSlot: {
+                    name: '12PM - 5PM',
+                    charge: 30,
+                    currency: 'AUD'
+                },
+                type: 'BOOKED'
+            },
+            {
+                id: 17,
+                date: new Date('2018-01-05'),
+                timeSlot: {
+                    name: '8AM - 12PM',
+                    charge: 30,
+                    currency: 'AUD'
+                },
+                type: 'BOOKED'
+            },
+            {
+                id: 18,
+                date: new Date('2018-01-05'),
                 timeSlot: {
                     name: '12PM - 5PM',
                     charge: 30,
