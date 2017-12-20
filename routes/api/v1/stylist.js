@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var path = require('path');
-var t = require('../../../dao/stylist.dao');
+var stylistDAO = require('../../../dao/stylist.dao');
 var mysql = require('mysql');
 
 
@@ -134,8 +134,7 @@ var stylistList = [
         zip: 5024,
         country: 'Australia',
         telephone: 711225455,
-        description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland,' +
-        ' one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
+        description: 'Graduated as a hairdresser and barber 2014. Since then I have been working in 2 different salons in my homecountry Finland, one barber shop and 2 different salons in Australia in Cairns and Coffs Harbour. As a hairsalon assistant I have been working in 2 different high-end salons in Melbourne and Sydney.',
         terms_and_condition: '',
         skills: ['Bridal', 'Curling', 'Hair Cutting'],
         pref_locations: ['Perth', 'Darwin', 'Canberra', 'Hobart', 'Brisbane'],
@@ -354,55 +353,43 @@ function base64_encode(file) {
 }
 
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    // var connection = mysql.createConnection({
-    //     host: 'localhost',
-    //     user: 'root',
-    //     password: 'admin',
-    //     database: 'hairb2b'
-    // });
-    // connection.connect();
-    //
-    // connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-    //     if (error) throw error;
-    //     console.log('The solution is: ', results[0].solution);
-    // });
-    //
-    // connection.end();
-    console.log(t);
-    t.test();
-    res.status(200).send(t);
-});
+router.get('/', stylistDAO.retrieveAllStylist);
+// router.get('/', stylistDAO.retrieveAllStylistUsingPromise);
+
+router.get('/getskillsforstylist/:id', stylistDAO.retrieveSkillsForStylist);
+
+router.get('/getpreflocationsforstylist/:id', stylistDAO.retrievePreferredLocationsForStylist);
+
+router.get('/getstylistsbyskill/:skill', stylistDAO.retrieveStylistsForSkill);
 
 
-router.get('/getstylistsbyskill/:skill', function (req, res, next) {
-    var skill = req.params.skill;
-    console.log(skill);
-
-    const result = stylistList.filter(value => {
-
-        if (value.skills.filter(sk => {
-                if (sk.startsWith(skill) || sk.endsWith(skill)) {
-                    return true;
-                }
-                return false;
-            }).length > 0) {
-            return true;
-        }
-        return false;
-    });
-    result.sort((a, b) => {
-        if (a.rating > b.rating) {
-            return -1;
-        } else if (a.rating === b.rating) {
-            return 0;
-        }
-        return 1;
-    });
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(result);
-});
+// router.get('/getstylistsbyskill/:skill', function (req, res, next) {
+//     var skill = req.params.skill;
+//     console.log(skill);
+//
+//     const result = stylistList.filter(value => {
+//
+//         if (value.skills.filter(sk => {
+//                 if (sk.startsWith(skill) || sk.endsWith(skill)) {
+//                     return true;
+//                 }
+//                 return false;
+//             }).length > 0) {
+//             return true;
+//         }
+//         return false;
+//     });
+//     result.sort((a, b) => {
+//         if (a.rating > b.rating) {
+//             return -1;
+//         } else if (a.rating === b.rating) {
+//             return 0;
+//         }
+//         return 1;
+//     });
+//     res.setHeader('Content-Type', 'application/json');
+//     res.status(200).send(result);
+// });
 
 router.get('/gettopstylists', function (req, res, next) {
 
@@ -411,80 +398,87 @@ router.get('/gettopstylists', function (req, res, next) {
     res.status(200).send(stylistList);
 });
 
-router.get('/getstylist/:id', function (req, res, next) {
-    var id = +req.params.id;
-    console.log(id);
+router.get('/getstylist/:id', stylistDAO.retrieveStylistById);
 
-    const result = stylistList.filter(value => {
+// router.get('/getstylist/:id', function (req, res, next) {
+//     var id = +req.params.id;
+//     console.log(id);
+//
+//     const result = stylistList.filter(value => {
+//
+//         if (value.id === id) {
+//             return true;
+//         }
+//         return false;
+//     });
+//
+//     result.sort((a, b) => {
+//         if (a.rating > b.rating) {
+//             return -1;
+//         } else if (a.rating === b.rating) {
+//             return 0;
+//         }
+//         return 1;
+//     });
+//     res.setHeader('Content-Type', 'application/json');
+//     res.status(200).send(result[0]);
+// });
 
-        if (value.id === id) {
-            return true;
-        }
-        return false;
-    });
+router.get('/getnames', stylistDAO.retrieveStylistNames);
 
-    result.sort((a, b) => {
-        if (a.rating > b.rating) {
-            return -1;
-        } else if (a.rating === b.rating) {
-            return 0;
-        }
-        return 1;
-    });
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(result[0]);
-});
-
-router.get('/getnames', function (req, res, next) {
-    res.status(200).send([
-        'Margit Redford',
-        'Taunya Spada',
-        'Krystina Lish',
-        'Florine Meister',
-        'Malcolm Trostle',
-        'Kerstin Berkman',
-        'Hank Gotcher',
-        'Kathyrn Chestnut',
-        'Eloise Epp',
-        'Eleanora Hiller',
-        'Briana Poulin',
-        'Ettie Barrow',
-        'Reggie Tonkin',
-        'Augustine Kuhl',
-        'Jacelyn Nystrom',
-        'Shelia Foote',
-        'Stormy Knoles',
-        'Florida Shuck',
-        'Shari Prasad',
-        'Nancey Yamada '
-    ]);
-});
+// router.get('/getnames', function (req, res, next) {
+//     res.status(200).send([
+//         'Margit Redford',
+//         'Taunya Spada',
+//         'Krystina Lish',
+//         'Florine Meister',
+//         'Malcolm Trostle',
+//         'Kerstin Berkman',
+//         'Hank Gotcher',
+//         'Kathyrn Chestnut',
+//         'Eloise Epp',
+//         'Eleanora Hiller',
+//         'Briana Poulin',
+//         'Ettie Barrow',
+//         'Reggie Tonkin',
+//         'Augustine Kuhl',
+//         'Jacelyn Nystrom',
+//         'Shelia Foote',
+//         'Stormy Knoles',
+//         'Florida Shuck',
+//         'Shari Prasad',
+//         'Nancey Yamada '
+//     ]);
+// });
 
 
-router.get('/getstylistbyname/:name', function (req, res, next) {
-    var name = req.params.name;
-    console.log(name);
+router.get('/getstylistbyname/:name', stylistDAO.retrieveStylistByName);
 
+//     router.get('/getstylistbyname/:name', function (req, res, next) {
+//     var name = req.params.name;
+//     console.log(name);
+//
+//
+//     const result = stylistList.filter(value => {
+//         var n = value.first_name + ' ' + value.last_name;
+//         if (n.startsWith(name) || n.endsWith(name)) {
+//             return true;
+//         }
+//         return false;
+//     });
+//
+//     result.sort((a, b) => {
+//         if (a.rating > b.rating) {
+//             return -1;
+//         } else if (a.rating === b.rating) {
+//             return 0;
+//         }
+//         return 1;
+//     });
+//     res.setHeader('Content-Type', 'application/json');
+//     res.status(200).send(result);
+// });
 
-    const result = stylistList.filter(value => {
-        var n = value.first_name + ' ' + value.last_name;
-        if (n.startsWith(name) || n.endsWith(name)) {
-            return true;
-        }
-        return false;
-    });
-
-    result.sort((a, b) => {
-        if (a.rating > b.rating) {
-            return -1;
-        } else if (a.rating === b.rating) {
-            return 0;
-        }
-        return 1;
-    });
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(result);
-});
-
+router.get('/getchargesforstylist/:id', stylistDAO.retrieveChargesForStylist);
 
 module.exports = router;
