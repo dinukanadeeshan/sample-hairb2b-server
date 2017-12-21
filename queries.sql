@@ -52,5 +52,20 @@ select
 	tg.path as profile_pic,
     tp.rating as rating
 from trn_stylist ts, trn_profile tp, trn_job_role tjr, trn_gallery tg
-where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id and 'Bridal' in (select sk.name from trn_skill sk, trn_stylist_skill tss where tss.stylist_id = ts.profile_id)
+where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id and 'Bridal' in (select sk.description from trn_skill sk, trn_stylist_skill tss where tss.stylist_id = ts.profile_id and tss.skill_id = sk.id)
 order by 16 desc;
+
+
+select name, charge, currency
+from trn_charge_per_slot tcps, trn_time_slot tts
+where tcps.time_slot_id = tts.id and tcps.stylist_id = 2;
+
+select
+	distinct tbd.id as id,
+    tts.name as name,
+    tcps.charge as charge,
+    tcps.currency as currency,
+    tbd.type as type,
+    tbd.date as date
+from trn_time_slot tts, trn_busy_date tbd, trn_charge_per_slot tcps
+where tbd.time_slot_id = tts.id and tcps.time_slot_id = tbd.time_slot_id and tcps.stylist_id = tbd.stylist_id and tbd.stylist_id = 1;

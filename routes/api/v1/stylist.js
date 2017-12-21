@@ -3,8 +3,9 @@ var router = express.Router();
 var fs = require('fs');
 var path = require('path');
 var stylistDAO = require('../../../dao/stylist.dao');
-var mysql = require('mysql');
 
+
+var syncSql = require('sync-sql');
 
 var stylistList = [
     {
@@ -356,11 +357,75 @@ function base64_encode(file) {
 router.get('/', stylistDAO.retrieveAllStylist);
 // router.get('/', stylistDAO.retrieveAllStylistUsingPromise);
 
+router.get('/test', function (req, res, next) {
+
+    var connection = {
+        host: 'localhost',
+        user: 'root',
+        password: 'admin',
+        database: 'hairb2b',
+        port: '3306'
+    };
+
+    var output = syncSql.mysql(
+        connection
+        ,
+        "select * from trn_stylist"
+    );
+
+    // console.log(JSON.stringify(output));
+
+    var stylist_list = output.data.rows.map(row => {
+        console.log(row.id);
+
+        var ex = syncSql.mysql(connection, "select ts.* from trn_skill ts, trn_stylist_skill tss where ts.id = tss.skill_id and tss.stylist_id = " + row.profile_id);
+
+        var skills = ex.data.rows.map(value => {
+            console.log(value);
+            return value.description;
+        });
+
+        row.skills = skills;
+
+        // console.log(ex.data.rows);
+
+        return row;
+    });
+
+
+    res.send(stylist_list);
+
+});
+
+
 router.get('/getskillsforstylist/:id', stylistDAO.retrieveSkillsForStylist);
 
 router.get('/getpreflocationsforstylist/:id', stylistDAO.retrievePreferredLocationsForStylist);
 
 router.get('/getstylistsbyskill/:skill', stylistDAO.retrieveStylistsForSkill);
+
+router.get('/gettopstylists', function (req, res, next) {
+
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(stylistList);
+});
+
+router.get('/getstylist/:id', stylistDAO.retrieveStylistById);
+
+router.get('/getnames', stylistDAO.retrieveStylistNames);
+
+router.get('/getstylistbyname/:name', stylistDAO.retrieveStylistByName);
+
+router.get('/getchargesforstylist/:id', stylistDAO.retrieveChargesForStylist);
+
+module.exports = router;
+
+
+
+
+
+
 
 
 // router.get('/getstylistsbyskill/:skill', function (req, res, next) {
@@ -391,14 +456,6 @@ router.get('/getstylistsbyskill/:skill', stylistDAO.retrieveStylistsForSkill);
 //     res.status(200).send(result);
 // });
 
-router.get('/gettopstylists', function (req, res, next) {
-
-
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(stylistList);
-});
-
-router.get('/getstylist/:id', stylistDAO.retrieveStylistById);
 
 // router.get('/getstylist/:id', function (req, res, next) {
 //     var id = +req.params.id;
@@ -424,7 +481,6 @@ router.get('/getstylist/:id', stylistDAO.retrieveStylistById);
 //     res.status(200).send(result[0]);
 // });
 
-router.get('/getnames', stylistDAO.retrieveStylistNames);
 
 // router.get('/getnames', function (req, res, next) {
 //     res.status(200).send([
@@ -452,7 +508,6 @@ router.get('/getnames', stylistDAO.retrieveStylistNames);
 // });
 
 
-router.get('/getstylistbyname/:name', stylistDAO.retrieveStylistByName);
 
 //     router.get('/getstylistbyname/:name', function (req, res, next) {
 //     var name = req.params.name;
@@ -479,6 +534,5 @@ router.get('/getstylistbyname/:name', stylistDAO.retrieveStylistByName);
 //     res.status(200).send(result);
 // });
 
-router.get('/getchargesforstylist/:id', stylistDAO.retrieveChargesForStylist);
 
-module.exports = router;
+

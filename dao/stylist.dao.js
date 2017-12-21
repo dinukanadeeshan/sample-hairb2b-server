@@ -3,6 +3,8 @@ var Rx = require('rxjs/Rx');
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
+var syncSql = require('sync-sql');
+
 
 // function to encode file data to base64 encoded string
 function base64_encode(file) {
@@ -11,6 +13,14 @@ function base64_encode(file) {
     // convert binary data to base64 encoded string
     return new Buffer(bitmap).toString('base64');
 }
+
+var connection = {
+    host: 'localhost',
+    user: 'root',
+    password: 'admin',
+    database: 'hairb2b',
+    port: '3306'
+};
 
 
 module.exports = {
@@ -229,11 +239,10 @@ module.exports = {
     retrieveStylistsForSkill: function (req, res, next) {
         var skill = req.params.skill;
 
-        var stylists = [];
-
-        var database = new Database();
-
-        database.query('select \n' +
+        var output = syncSql.mysql(
+            connection
+            ,
+            'select \n' +
             '    ts.id as id, \n' +
             '    ts.first_name as first_name, \n' +
             '    ts.last_name as last_name, \n' +
@@ -252,46 +261,95 @@ module.exports = {
             '    tp.rating as rating\n' +
             'from trn_stylist ts, trn_profile tp, trn_job_role tjr, trn_gallery tg\n' +
             'where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id and \'' + skill + '\' in (select sk.description from trn_skill sk, trn_stylist_skill tss where tss.stylist_id = ts.profile_id and tss.skill_id = sk.id)\n' +
-            'order by 16 desc').then(rows => {
-            async.each(rows, function (row, callback) {
-                var stylist = {};
-                stylist.id = row.id;
-                stylist.first_name = row.first_name;
-                stylist.last_name = row.last_name;
-                stylist.address_line_1 = row.address_line_1;
-                stylist.address_line_2 = row.address_line_2;
-                stylist.city = row.city;
-                stylist.state = row.state;
-                stylist.country = row.country;
-                stylist.telephone = row.telephone;
-                stylist.description = row.description;
-                stylist.terms_and_condition = row.terms_and_condition;
-                stylist.job_role = row.job_role;
-                stylist.created_date = row.created_date;
-                stylist.is_active = row.is_active;
-                stylist.profile_pic = base64_encode(path.resolve(row.profile_pic));
-                stylist.rating = row.rating;
-                stylist.skills = [];
-                stylist.pref_locations = [];
-                stylist.charges = [];
-                stylist.busyDates = [];
+            ' order by 16 desc'
+        );
 
-                stylists.push(stylist);
-                callback();
+
+        var stylist_list = output.data.rows.map(row => {
+            console.log(row.id);
+
+            var stylist = {};
+            stylist.id = row.id;
+            stylist.first_name = row.first_name;
+            stylist.last_name = row.last_name;
+            stylist.address_line_1 = row.address_line_1;
+            stylist.address_line_2 = row.address_line_2;
+            stylist.city = row.city;
+            stylist.state = row.state;
+            stylist.country = row.country;
+            stylist.telephone = row.telephone;
+            stylist.description = row.description;
+            stylist.terms_and_condition = row.terms_and_condition;
+            stylist.job_role = row.job_role;
+            stylist.created_date = row.created_date;
+            stylist.is_active = row.is_active;
+            stylist.profile_pic = base64_encode(path.resolve(row.profile_pic));
+            stylist.rating = row.rating;
+            stylist.skills = [];
+            stylist.pref_locations = [];
+            stylist.charges = [];
+            stylist.busyDates = [];
+
+
+            var skill_output = syncSql.mysql(connection, "select ts.* from trn_skill ts, trn_stylist_skill tss where ts.id = tss.skill_id and tss.stylist_id = " + row.id);
+
+            console.log(skill_output);
+            stylist.skills = skill_output.data.rows.map(value => {
+                console.log(value);
+                return value.description;
             });
 
-            res.setHeader('Content-type', 'application/json');
-            res.status(200).send(stylists);
+
+            var prefLocation_output = syncSql.mysql(connection, 'select tl.city as city, tl.state as state\n' +
+                'from trn_location tl, trn_preferred_location tpl\n' +
+                'where tl.id = tpl.location_id and tpl.stylist_id = ' + stylist.id);
+
+            stylist.pref_locations = prefLocation_output.data.rows.map(value => {
+                return value.city;
+            });
+
+            var charges_output = syncSql.mysql(connection, 'select name, charge, currency\n' +
+                'from trn_charge_per_slot tcps, trn_time_slot tts\n' +
+                'where tcps.time_slot_id = tts.id and tcps.stylist_id = ' + stylist.id);
+
+            stylist.charges = charges_output.data.rows.map(value => {
+
+                return value
+            });
+
+            var busydates_output = syncSql.mysql(connection, 'select\n' +
+                '    distinct tbd.id as id,\n' +
+                '    tts.name as name,\n' +
+                '    tcps.charge as charge,\n' +
+                '    tcps.currency as currency,\n' +
+                '    tbd.type as type,\n' +
+                '    tbd.date as date\n' +
+                'from trn_time_slot tts, trn_busy_date tbd, trn_charge_per_slot tcps\n' +
+                'where tbd.time_slot_id = tts.id and tcps.time_slot_id = tbd.time_slot_id and tcps.stylist_id = tbd.stylist_id and tbd.stylist_id = ' + stylist.id);
+
+            stylist.busyDates = busydates_output.data.rows.map(value => {
+                return {
+                    id: value.id,
+                    timeSlot: {name: value.name, charge: value.charge, currency: value.currency},
+                    date: value.date,
+                    type: value.type
+                };
+            });
+            return stylist;
         });
 
-        database.close()
+
+        res.setHeader('Content-type', 'application/json');
+        res.status(200).send(stylist_list);
     },
 
     retrieveStylistById: function (req, res, next) {
         var id = +req.params.id;
-        var database = new Database();
 
-        database.query('select \n' +
+        var output = syncSql.mysql(
+            connection
+            ,
+            'select \n' +
             '    ts.id as id, \n' +
             '    ts.first_name as first_name, \n' +
             '    ts.last_name as last_name, \n' +
@@ -310,32 +368,87 @@ module.exports = {
             '    tp.rating as rating\n' +
             'from trn_stylist ts, trn_profile tp, trn_job_role tjr, trn_gallery tg\n' +
             'where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id and ts.profile_id = ' + id +
-            ' order by 16 desc').then(rows => {
+            ' order by 16 desc'
+        );
+
+
+        var stylist_list = output.data.rows.map(row => {
+            console.log(row.id);
+
             var stylist = {};
-            stylist.id = rows[0].id;
-            stylist.first_name = rows[0].first_name;
-            stylist.last_name = rows[0].last_name;
-            stylist.address_line_1 = rows[0].address_line_1;
-            stylist.address_line_2 = rows[0].address_line_2;
-            stylist.city = rows[0].city;
-            stylist.state = rows[0].state;
-            stylist.country = rows[0].country;
-            stylist.telephone = rows[0].telephone;
-            stylist.description = rows[0].description;
-            stylist.terms_and_condition = rows[0].terms_and_condition;
-            stylist.job_role = rows[0].job_role;
-            stylist.created_date = rows[0].created_date;
-            stylist.is_active = rows[0].is_active;
-            stylist.profile_pic = base64_encode(path.resolve(rows[0].profile_pic));
-            stylist.rating = rows[0].rating;
+            stylist.id = row.id;
+            stylist.first_name = row.first_name;
+            stylist.last_name = row.last_name;
+            stylist.address_line_1 = row.address_line_1;
+            stylist.address_line_2 = row.address_line_2;
+            stylist.city = row.city;
+            stylist.state = row.state;
+            stylist.country = row.country;
+            stylist.telephone = row.telephone;
+            stylist.description = row.description;
+            stylist.terms_and_condition = row.terms_and_condition;
+            stylist.job_role = row.job_role;
+            stylist.created_date = row.created_date;
+            stylist.is_active = row.is_active;
+            stylist.profile_pic = base64_encode(path.resolve(row.profile_pic));
+            stylist.rating = row.rating;
             stylist.skills = [];
             stylist.pref_locations = [];
             stylist.charges = [];
             stylist.busyDates = [];
-            res.send(stylist);
+
+
+            var skill_output = syncSql.mysql(connection, "select ts.* from trn_skill ts, trn_stylist_skill tss where ts.id = tss.skill_id and tss.stylist_id = " + row.id);
+
+            console.log(skill_output);
+            stylist.skills = skill_output.data.rows.map(value => {
+                console.log(value);
+                return value.description;
+            });
+
+
+            var prefLocation_output = syncSql.mysql(connection, 'select tl.city as city, tl.state as state\n' +
+                'from trn_location tl, trn_preferred_location tpl\n' +
+                'where tl.id = tpl.location_id and tpl.stylist_id = ' + stylist.id);
+
+            stylist.pref_locations = prefLocation_output.data.rows.map(value => {
+                return value.city;
+            });
+
+            var charges_output = syncSql.mysql(connection, 'select name, charge, currency\n' +
+                'from trn_charge_per_slot tcps, trn_time_slot tts\n' +
+                'where tcps.time_slot_id = tts.id and tcps.stylist_id = ' + stylist.id);
+
+            stylist.charges = charges_output.data.rows.map(value => {
+
+                return value
+            });
+
+            var busydates_output = syncSql.mysql(connection, 'select\n' +
+                '    distinct tbd.id as id,\n' +
+                '    tts.name as name,\n' +
+                '    tcps.charge as charge,\n' +
+                '    tcps.currency as currency,\n' +
+                '    tbd.type as type,\n' +
+                '    tbd.date as date\n' +
+                'from trn_time_slot tts, trn_busy_date tbd, trn_charge_per_slot tcps\n' +
+                'where tbd.time_slot_id = tts.id and tcps.time_slot_id = tbd.time_slot_id and tcps.stylist_id = tbd.stylist_id and tbd.stylist_id = ' + stylist.id);
+
+            stylist.busyDates = busydates_output.data.rows.map(value => {
+                return {
+                    id: value.id,
+                    timeSlot: {name: value.name, charge: value.charge, currency: value.currency},
+                    date: value.date,
+                    type: value.type
+                };
+            });
+
+            return stylist;
         });
 
-        database.close();
+
+        res.send(stylist_list[0]);
+
     },
 
     retrieveStylistByName: function (req, res, next) {
@@ -343,9 +456,10 @@ module.exports = {
         var first_name = name.split(' ')[0];
         var last_name = name.split(' ')[1];
 
-        var database = new Database();
-
-        database.query('select \n' +
+        var output = syncSql.mysql(
+            connection
+            ,
+            'select \n' +
             '    ts.id as id, \n' +
             '    ts.first_name as first_name, \n' +
             '    ts.last_name as last_name, \n' +
@@ -364,35 +478,87 @@ module.exports = {
             '    tp.rating as rating\n' +
             'from trn_stylist ts, trn_profile tp, trn_job_role tjr, trn_gallery tg\n' +
             'where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id and (ts.first_name like \'%' + first_name + '%\' or ts.last_name like \'%' + last_name + '%\')' +
-            ' order by 16 desc').then(rows => {
+            ' order by 16 desc'
+        );
+
+
+        var stylist_list = output.data.rows.map(row => {
+            console.log(row.id);
+
             var stylist = {};
-            stylist.id = rows[0].id;
-            stylist.first_name = rows[0].first_name;
-            stylist.last_name = rows[0].last_name;
-            stylist.address_line_1 = rows[0].address_line_1;
-            stylist.address_line_2 = rows[0].address_line_2;
-            stylist.city = rows[0].city;
-            stylist.state = rows[0].state;
-            stylist.country = rows[0].country;
-            stylist.telephone = rows[0].telephone;
-            stylist.description = rows[0].description;
-            stylist.terms_and_condition = rows[0].terms_and_condition;
-            stylist.job_role = rows[0].job_role;
-            stylist.created_date = rows[0].created_date;
-            stylist.is_active = rows[0].is_active;
-            stylist.profile_pic = base64_encode(path.resolve(rows[0].profile_pic));
-            stylist.rating = rows[0].rating;
+            stylist.id = row.id;
+            stylist.first_name = row.first_name;
+            stylist.last_name = row.last_name;
+            stylist.address_line_1 = row.address_line_1;
+            stylist.address_line_2 = row.address_line_2;
+            stylist.city = row.city;
+            stylist.state = row.state;
+            stylist.country = row.country;
+            stylist.telephone = row.telephone;
+            stylist.description = row.description;
+            stylist.terms_and_condition = row.terms_and_condition;
+            stylist.job_role = row.job_role;
+            stylist.created_date = row.created_date;
+            stylist.is_active = row.is_active;
+            stylist.profile_pic = base64_encode(path.resolve(row.profile_pic));
+            stylist.rating = row.rating;
             stylist.skills = [];
             stylist.pref_locations = [];
             stylist.charges = [];
             stylist.busyDates = [];
 
-            res.send(stylist);
+
+            var skill_output = syncSql.mysql(connection, "select ts.* from trn_skill ts, trn_stylist_skill tss where ts.id = tss.skill_id and tss.stylist_id = " + row.id);
+
+            console.log(skill_output);
+            stylist.skills = skill_output.data.rows.map(value => {
+                console.log(value);
+                return value.description;
+            });
+
+
+            var prefLocation_output = syncSql.mysql(connection, 'select tl.city as city, tl.state as state\n' +
+                'from trn_location tl, trn_preferred_location tpl\n' +
+                'where tl.id = tpl.location_id and tpl.stylist_id = ' + stylist.id);
+
+            stylist.pref_locations = prefLocation_output.data.rows.map(value => {
+                return value.city;
+            });
+
+            var charges_output = syncSql.mysql(connection, 'select name, charge, currency\n' +
+                'from trn_charge_per_slot tcps, trn_time_slot tts\n' +
+                'where tcps.time_slot_id = tts.id and tcps.stylist_id = ' + stylist.id);
+
+            stylist.charges = charges_output.data.rows.map(value => {
+
+                return value
+            });
+            var busydates_output = syncSql.mysql(connection, 'select\n' +
+                '    distinct tbd.id as id,\n' +
+                '    tts.name as name,\n' +
+                '    tcps.charge as charge,\n' +
+                '    tcps.currency as currency,\n' +
+                '    tbd.type as type,\n' +
+                '    tbd.date as date\n' +
+                'from trn_time_slot tts, trn_busy_date tbd, trn_charge_per_slot tcps\n' +
+                'where tbd.time_slot_id = tts.id and tcps.time_slot_id = tbd.time_slot_id and tcps.stylist_id = tbd.stylist_id and tbd.stylist_id = ' + stylist.id);
+
+            stylist.busyDates = busydates_output.data.rows.map(value => {
+                return {
+                    id: value.id,
+                    timeSlot: {name: value.name, charge: value.charge, currency: value.currency},
+                    date: value.date,
+                    type: value.type
+                };
+            });
+            return stylist;
         });
 
-        database.close();
-    },
 
+        res.send(stylist_list);
+
+
+    },
 
     retrieveChargesForStylist: function (req, res, next) {
         var id = req.params.id;
