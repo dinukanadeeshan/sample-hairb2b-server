@@ -359,42 +359,43 @@ router.get('/', stylistDAO.retrieveAllStylist);
 
 router.get('/test', function (req, res, next) {
 
-    var connection = {
-        host: 'localhost',
-        user: 'root',
-        password: 'admin',
-        database: 'hairb2b',
-        port: '3306'
-    };
+    // var connection = {
+    //     host: 'localhost',
+    //     user: 'root',
+    //     password: 'admin',
+    //     database: 'hairb2b',
+    //     port: '3306'
+    // };
+    //
+    // var output = syncSql.mysql(
+    //     connection
+    //     ,
+    //     "select * from trn_stylist"
+    // );
+    //
+    // // console.log(JSON.stringify(output));
+    //
+    // var stylist_list = output.data.rows.map(row => {
+    //     console.log(row.id);
+    //
+    //     var ex = syncSql.mysql(connection, "select ts.* from trn_skill ts, trn_stylist_skill tss where ts.id = tss.skill_id and tss.stylist_id = " + row.profile_id);
+    //
+    //     var skills = ex.data.rows.map(value => {
+    //         console.log(value);
+    //         return value.description;
+    //     });
+    //
+    //     row.skills = skills;
+    //
+    //     // console.log(ex.data.rows);
+    //
+    //     return row;
+    // });
+    //
+    //
+    // res.send(stylist_list);
 
-    var output = syncSql.mysql(
-        connection
-        ,
-        "select * from trn_stylist"
-    );
-
-    // console.log(JSON.stringify(output));
-
-    var stylist_list = output.data.rows.map(row => {
-        console.log(row.id);
-
-        var ex = syncSql.mysql(connection, "select ts.* from trn_skill ts, trn_stylist_skill tss where ts.id = tss.skill_id and tss.stylist_id = " + row.profile_id);
-
-        var skills = ex.data.rows.map(value => {
-            console.log(value);
-            return value.description;
-        });
-
-        row.skills = skills;
-
-        // console.log(ex.data.rows);
-
-        return row;
-    });
-
-
-    res.send(stylist_list);
-
+    res.send('hell0');
 });
 
 

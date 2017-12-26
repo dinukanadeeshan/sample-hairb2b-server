@@ -335,6 +335,15 @@ module.exports = {
                     type: value.type
                 };
             });
+
+
+            var gallery_output = syncSql.mysql(connection, 'select * from trn_gallery where profile_id = ' + stylist.id + ' limit 1,10');
+            console.log('000000000000000000000000');
+            console.log(gallery_output);
+            stylist.gallery = gallery_output.data.rows.map(value => {
+                return base64_encode(path.resolve(value.path));
+            });
+
             return stylist;
         });
 
@@ -396,7 +405,7 @@ module.exports = {
             stylist.pref_locations = [];
             stylist.charges = [];
             stylist.busyDates = [];
-
+            stylist.gallery = [];
 
             var skill_output = syncSql.mysql(connection, "select ts.* from trn_skill ts, trn_stylist_skill tss where ts.id = tss.skill_id and tss.stylist_id = " + row.id);
 
@@ -443,6 +452,10 @@ module.exports = {
                 };
             });
 
+            var gallery_output = syncSql.mysql(connection, 'select * from trn_gallery where profile_id = ' + stylist.id + ' limit 1,10');
+            stylist.gallery = gallery_output.data.rows.map(value => {
+                return base64_encode(path.resolve(value.path));
+            });
             return stylist;
         });
 
@@ -550,6 +563,11 @@ module.exports = {
                     date: value.date,
                     type: value.type
                 };
+            });
+
+            var gallery_output = syncSql.mysql(connection, 'select * from trn_gallery where profile_id = ' + stylist.id + ' limit 1,10');
+            stylist.gallery = gallery_output.data.rows.map(value => {
+                return base64_encode(path.resolve(value.path));
             });
             return stylist;
         });
