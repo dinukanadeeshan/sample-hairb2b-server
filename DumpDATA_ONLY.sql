@@ -41,7 +41,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `trn_gallery` WRITE;
 /*!40000 ALTER TABLE `trn_gallery` DISABLE KEYS */;
-INSERT INTO `trn_gallery` VALUES (1,'./public/images/margit.jpg',1),(2,'./public/images/taunya.jpg',2),(3,'./public/images/krystina.jpg',3);
+INSERT INTO `trn_gallery` VALUES (1,'./public/images/margit.jpg',1),(2,'./public/images/taunya.jpg',2),(3,'./public/images/krystina.jpg',3),(4,'./public/images/margit/g1.jpg',1),(5,'./public/images/margit/g2.jpg',1),(6,'./public/images/margit/g3.jpg',1),(7,'./public/images/margit/g4.jpg',1),(8,'./public/images/margit/g5.jpg',1),(9,'./public/images/margit/g6.jpg',1),(10,'./public/images/taunya/g1.jpg',2),(11,'./public/images/taunya/g2.jpg',2),(12,'./public/images/taunya/g3.jpg',2),(13,'./public/images/taunya/g4.jpg',2),(14,'./public/images/taunya/g5.jpg',2),(15,'./public/images/taunya/g6.jpg',2),(16,'./public/images/krystina/g1.jpg',3),(17,'./public/images/krystina/g2.jpg',3),(18,'./public/images/krystina/g3.jpg',3),(19,'./public/images/krystina/g4.jpg',3),(20,'./public/images/krystina/g5.jpg',3),(21,'./public/images/krystina/g6.jpg',3);
 /*!40000 ALTER TABLE `trn_gallery` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,4 +163,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-21 13:40:55
+-- Dump completed on 2017-12-26 17:14:23
