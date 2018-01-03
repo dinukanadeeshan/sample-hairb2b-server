@@ -105,6 +105,86 @@ module.exports = {
         // connection.end();
     },
 
+    retrieveTopStylist: function (req, res, next) {
+        var connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: 'admin',
+            database: 'hairb2b'
+        });
+        connection.connect();
+
+        connection.query('select \n' +
+            '    ts.id as id, \n' +
+            '    ts.first_name as first_name, \n' +
+            '    ts.last_name as last_name, \n' +
+            '    ts.address_line_1 as address_line_1, \n' +
+            '    ts.address_line_2 as address_line_2, \n' +
+            '    ts.city as city, \n' +
+            '    ts.state as state, \n' +
+            '    ts.country as country, \n' +
+            '    ts.telephone as telephone,\n' +
+            '    ts.description as description, \n' +
+            '    ts.terms_and_conditions as terms_and_conditions,\n' +
+            '    tjr.role as job_role,\n' +
+            '    tp.created_date as created_date,\n' +
+            '    tp.is_active as is_active,\n' +
+            '    tg.path as profile_pic,\n' +
+            '    tp.rating as rating\n' +
+            'from trn_stylist ts, trn_profile tp, trn_job_role tjr, trn_gallery tg\n' +
+            'where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id\n' +
+            'order by 16 desc', function (err, rows, fields) {
+            if (err) throw  err;
+            var stylists = [];
+
+            async.each(rows, function (row, callback) {
+                var stylist = {};
+                stylist.id = row.id;
+                stylist.first_name = row.first_name;
+                stylist.last_name = row.last_name;
+                stylist.address_line_1 = row.address_line_1;
+                stylist.address_line_2 = row.address_line_2;
+                stylist.city = row.city;
+                stylist.state = row.state;
+                stylist.country = row.country;
+                stylist.telephone = row.telephone;
+                stylist.description = row.description;
+                stylist.terms_and_condition = row.terms_and_condition;
+                stylist.job_role = row.job_role;
+                stylist.created_date = row.created_date;
+                stylist.is_active = row.is_active;
+                stylist.profile_pic = base64_encode(path.resolve(row.profile_pic));
+                stylist.rating = row.rating;
+                stylist.skills = [];
+                stylist.pref_locations = [];
+                stylist.charges = [];
+                stylist.busyDates = [];
+
+                // connection.query('select\n' +
+                //     'tsk.description\n' +
+                //     'from trn_stylist ts, trn_skill tsk, trn_stylist_skill tss\n' +
+                //     'where ts.profile_id = tss.stylist_id and tss.skill_id = tsk.id and ts.profile_id=2', function (err, rows, fields) {
+                //     var skills = [];
+                //     async.each(rows, function (row, callb) {
+                //         skills.push(__r.description);
+                //         stylist.skills.push(__r.description);
+                //         callb();
+                //     });
+                //     stylist.skills = skills;
+                //
+                // });
+
+                stylists.push(stylist);
+                callback();
+            });
+
+            res.setHeader('Content-type', 'application/json');
+            res.status(200).send(stylists);
+        });
+
+        // connection.end();
+    },
+
     retrieveAllStylistUsingPromise: function (req, res, next) {
         var database = new Database();
         var firstResulst, secondRestulst;
