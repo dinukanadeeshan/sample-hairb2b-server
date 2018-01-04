@@ -383,7 +383,6 @@ module.exports = router;
 // ];
 
 
-
 // router.get('/getstylistsbyskill/:skill', function (req, res, next) {
 //     var skill = req.params.skill;
 //     console.log(skill);
@@ -462,7 +461,6 @@ module.exports = router;
 //         'Nancey Yamada '
 //     ]);
 // });
-
 
 
 //     router.get('/getstylistbyname/:name', function (req, res, next) {

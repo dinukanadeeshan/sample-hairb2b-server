@@ -16,42 +16,53 @@ function base64_encode(file) {
 
 /* GET home page. */
 router.get('/getskills', function (req, res, next) {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(JSON.stringify([
-        {
-            id: 1,
-            skill: 'Bridal'
-        },
-        {
-            id: 2,
-            skill: 'Curling'
-        },
-        {
-            id: 3,
-            skill: 'Rebonding'
-        },
-        {
-            id: 4,
-            skill: 'Hair Coloring'
-        },
-        {
-            id: 5,
-            skill: 'Hair Cutting'
-        }
-    ]));
+
+    var database = new Database();
+    var skills = [];
+    database.query('select * from trn_skill').then(rows => {
+        skills = rows.map(row => {
+            return row.description;
+        });
+        res.setHeader('Content-Type', 'application/json');
+        res.send(skills);
+
+    });
+    database.close();
+    // res.status(200).send(JSON.stringify([
+    //     {
+    //         id: 1,
+    //         skill: 'Bridal'
+    //     },
+    //     {
+    //         id: 2,
+    //         skill: 'Curling'
+    //     },
+    //     {
+    //         id: 3,
+    //         skill: 'Rebonding'
+    //     },
+    //     {
+    //         id: 4,
+    //         skill: 'Hair Coloring'
+    //     },
+    //     {
+    //         id: 5,
+    //         skill: 'Hair Cutting'
+    //     }
+    // ]));
 });
 router.get('/jobroles', function (req, res, next) {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(JSON.stringify([
-        {
-            id: 1,
-            role: 'Educator'
-        },
-        {
-            id: 2,
-            role: 'Stylist'
-        }
-    ]));
+    var database = new Database();
+    var job_roles = [];
+    database.query('select * from trn_job_role').then(rows => {
+        job_roles = rows.map(row => {
+            return {id: row.id, role: row.role};
+        });
+        res.setHeader('Content-Type', 'application/json');
+        res.send(job_roles);
+
+    });
+    database.close();
 });
 
 router.get('/image', function (req, res, next) {
