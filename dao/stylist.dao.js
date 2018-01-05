@@ -318,7 +318,6 @@ module.exports = {
 
     retrieveStylistsForSkill: function (req, res, next) {
         var skill = req.params.skill;
-
         var output = syncSql.mysql(
             connection
             ,

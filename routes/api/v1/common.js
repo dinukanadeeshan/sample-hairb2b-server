@@ -5,6 +5,7 @@ var path = require('path');
 var router = express.Router();
 
 var fs = require('fs');
+var mysql = require('mysql');
 
 // function to encode file data to base64 encoded string
 function base64_encode(file) {
@@ -21,7 +22,7 @@ router.get('/getskills', function (req, res, next) {
     var skills = [];
     database.query('select * from trn_skill').then(rows => {
         skills = rows.map(row => {
-            return row.description;
+            return {id: row.id, skill: row.description};
         });
         res.setHeader('Content-Type', 'application/json');
         res.send(skills);
@@ -76,3 +77,34 @@ router.get('/image', function (req, res, next) {
 
 
 module.exports = router;
+
+class Database {
+    constructor() {
+        this.connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: 'admin',
+            database: 'hairb2b'
+        });
+    }
+
+    query(sql, args) {
+        return new Promise((resolve, reject) => {
+            this.connection.query(sql, args, (err, rows) => {
+                if (err)
+                    return reject(err);
+                resolve(rows);
+            });
+        });
+    }
+
+    close() {
+        return new Promise((resolve, reject) => {
+            this.connection.end(err => {
+                if (err)
+                    return reject(err);
+                resolve();
+            });
+        });
+    }
+}
