@@ -182,7 +182,7 @@ module.exports = {
             res.status(200).send(stylists);
         });
 
-        // connection.end();
+        connection.end();
     },
 
     retrieveAllStylistUsingPromise: function (req, res, next) {
@@ -339,7 +339,8 @@ module.exports = {
             '    tg.path as profile_pic,\n' +
             '    tp.rating as rating\n' +
             'from trn_stylist ts, trn_profile tp, trn_job_role tjr, trn_gallery tg\n' +
-            'where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id and \'' + skill + '\' in (select sk.description from trn_skill sk, trn_stylist_skill tss where tss.stylist_id = ts.profile_id and tss.skill_id = sk.id)\n' +
+            'where ts.profile_id = tp.id and ts.job_role = tjr.id and tp.profile_pic = tg.id and \'' + skill + '\' in ' +
+            ' (select sk.description from trn_skill sk, trn_stylist_skill tss where tss.stylist_id = ts.profile_id and tss.skill_id = sk.id)\n' +
             ' order by 16 desc'
         );
 
@@ -374,7 +375,7 @@ module.exports = {
 
             console.log(skill_output);
             stylist.skills = skill_output.data.rows.map(value => {
-                console.log(value);
+                // console.log(value);
                 return value.description;
             });
 
@@ -417,8 +418,8 @@ module.exports = {
 
 
             var gallery_output = syncSql.mysql(connection, 'select * from trn_gallery where profile_id = ' + stylist.id + ' limit 1,10');
-            console.log('000000000000000000000000');
-            console.log(gallery_output);
+            // console.log('000000000000000000000000');
+            // console.log(gallery_output);
             stylist.gallery = gallery_output.data.rows.map(value => {
                 return base64_encode(path.resolve(value.path));
             });
@@ -461,7 +462,7 @@ module.exports = {
 
 
         var stylist_list = output.data.rows.map(row => {
-            console.log(row.id);
+            // console.log(row.id);
 
             var stylist = {};
             stylist.id = row.id;
